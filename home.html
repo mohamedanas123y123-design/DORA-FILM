@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="ha">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DORA FILM</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#101018;color:white;font-family:Arial}
+header{background:#e50914;padding:22px;text-align:center}
+header h1{margin:0;font-size:30px}
+header p{margin:7px 0 0}
+nav{padding:15px;text-align:center}
+select,input{padding:12px;border-radius:8px;border:0;margin:5px}
+input{width:85%;max-width:400px}
+h2{padding:15px;color:#ff3030}
+.movies{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:12px}
+.movie{background:#252530;border-radius:10px;overflow:hidden;text-align:center;padding-bottom:15px}
+.poster{height:125px;background:linear-gradient(135deg,#e50914,#27103d);display:flex;align-items:center;justify-content:center;font-size:40px}
+.movie h3{font-size:16px}
+button{background:#e50914;color:white;border:0;padding:10px 18px;border-radius:7px}
+footer{text-align:center;padding:25px;color:#aaa}
+</style>
+</head>
+<body>
+<header>
+<h1>🎬 DORA FILM</h1>
+<p id="welcome">Barka da zuwa DORA FILM</p>
+</header>
+
+<nav>
+<select id="language" onchange="changeLanguage()">
+<option value="ha">Hausa</option>
+<option value="en">English</option>
+<option value="fr">Français</option>
+</select>
+<br>
+<input id="search" type="text" placeholder="Nemi fim..." oninput="searchMovies()">
+</nav>
+
+<h2 id="heading">Fina-finai</h2>
+
+<div class="movies" id="movies">
+<div class="movie">
+<div class="poster">🎥</div>
+<h3>DORA FILM</h3>
+<p>Hausa</p>
+<button onclick="alert('Ba a saka bidiyon ba tukuna')">Kalli fim</button>
+</div>
+<div class="movie">
+<div class="poster">🎞️</div>
+<h3>English Movies</h3>
+<p>English</p>
+<button onclick="alert('No video added yet')">Watch</button>
+</div>
+<div class="movie">
+<div class="poster">🍿</div>
+<h3>Films Français</h3>
+<p>French</p>
+<button onclick="alert('Aucune vidéo ajoutée')">Regarder</button>
+</div>
+</div>
+
+<footer>
+© 2026 DORA FILM
+</footer>
+
+<script>
+const words={
+ha:{welcome:"Barka da zuwa DORA FILM",heading:"Fina-finai",search:"Nemi fim..."},
+en:{welcome:"Welcome to DORA FILM",heading:"Movies",search:"Search movies..."},
+fr:{welcome:"Bienvenue sur DORA FILM",heading:"Films",search:"Rechercher un film..."}
+};
+
+function changeLanguage(){
+let lang=document.getElementById("language").value;
+document.getElementById("welcome").textContent=words[lang].welcome;
+document.getElementById("heading").textContent=words[lang].heading;
+document.getElementById("search").placeholder=words[lang].search;
+}
+
+function searchMovies(){
+let value=document.getElementById("search").value.toLowerCase();
+document.querySelectorAll(".movie").forEach(movie=>{
+movie.style.display=movie.textContent.toLowerCase().includes(value)?"block":"none";
+});
+}
+</script>
+</body>
+</html>
