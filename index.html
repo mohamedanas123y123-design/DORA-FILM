@@ -4,150 +4,111 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DORA FILM PRO</title>
+<title>DORA FILM</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#101018;color:white;font-family:Arial,sans-serif}
-header{background:#d71920;padding:22px;text-align:center}
-header h1{margin:0;font-size:30px}
-header p{margin:7px 0 0}
-main{max-width:850px;margin:auto;padding:16px}
-.panel{background:#20202c;padding:16px;border-radius:12px;margin:16px 0}
-input,select,button{width:100%;padding:13px;margin:7px 0;border:0;border-radius:7px;font-size:16px}
-button{background:#e31b23;color:white;font-weight:bold;cursor:pointer}
-button:disabled{opacity:.5}
-h2{color:#ff454b}
-.film{background:#20202c;padding:12px;border-radius:10px;margin:14px 0}
-iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:8px}
-.film h3{margin:10px 0}
+body{margin:0;background:#101010;color:white;font-family:Arial}
+header{background:#d60000;text-align:center;padding:20px}
+h1{margin:0;font-size:32px}
+main{padding:15px;max-width:850px;margin:auto}
+input,select,button{box-sizing:border-box;width:100%;padding:13px;margin:7px 0;border:0;border-radius:6px;font-size:16px}
+button{background:#e00000;color:white;font-weight:bold}
+.film{background:#252525;padding:12px;margin:15px 0;border-radius:10px}
+iframe{width:100%;aspect-ratio:16/9;border:0}
 small{color:#ccc}
-#message{color:#ffcf60}
+#message{color:#00e676}
 </style>
 </head>
 <body>
-
-<header>
-<h1>🎬 DORA FILM</h1>
-<p>Hausa • English • French</p>
-</header>
-
+<header><h1>DORA FILM</h1>
+<p>Hausa • English • French</p></header>
 <main>
-<div class="panel">
-<h2>➕ Ƙara Sabon Fim</h2>
+<h2>Ƙara Sabon Fim</h2>
 <input id="filmTitle" placeholder="Sunan fim">
 <select id="filmLanguage">
 <option value="Hausa">Hausa</option>
 <option value="English">English</option>
 <option value="French">French</option>
 </select>
-<input id="filmURL" placeholder="Liƙa YouTube link">
-<button id="addButton" onclick="addFilm()">ADD FILM</button>
+<input id="filmURL" placeholder="Saka YouTube link">
+<button onclick="addFilm()">ADD FILM</button>
 <p id="message"></p>
-</div>
-
-<h2>🍿 Fina-finanmu</h2>
+<hr>
+<h2>Fina-finai</h2>
 <div id="films">Ana ɗauko fina-finai...</div>
 </main>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-
 <script>
-// MAYE 
 const firebaseConfig = {
-  apiKey: "AIzaSyCzh8VXNw5t-h_lpUPhFOkeNueGr17MFn4",
-  authDomain: "dora-film.firebaseapp.com",
-  projectId: "dora-film",
-  storageBucket: "dora-film.firebasestorage.app",
-  messagingSenderId: "626028311638",
-  appId: "1:626028311638:web:61d177e15648d0983437f7"
-}
+apiKey: "AIzaSyCzh8VXNw5t-h_lpUPhFOkeNueGr17MFn4",
+authDomain: "dora-film.firebaseapp.com",
+projectId: "dora-film",
+storageBucket: "dora-film.firebasestorage.app",
+messagingSenderId: "626028311638",
+appId: "1:626028311638:web:61d177e15648d0983437f7"
+};
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-function getVideoId(url) {
-  try {
-    const u = new URL(url);
-    if (u.hostname.includes("youtu.be"))
-      return u.pathname.slice(1).split("/")[0];
-    if (u.searchParams.get("v"))
-      return u.searchParams.get("v");
-    const parts = u.pathname.split("/");
-    if (["embed","shorts"].includes(parts[1]))
-      return parts[2];
-  } catch(e) {}
-  return null;
+function getVideoId(url){
+try{
+const u = new URL(url);
+if(u.hostname.includes("youtu.be")) return u.pathname.slice(1);
+if(u.hostname.includes("youtube.com")){
+if(u.pathname==="/watch") return u.searchParams.get("v");
+if(u.pathname.startsWith("/embed/")) return u.pathname.split("/")[2];
+if(u.pathname.startsWith("/shorts/")) return u.pathname.split("/")[2];
+}
+}catch(e){}
+return null;
 }
 
-async function addFilm() {
-  const title = document.getElementById("filmTitle").value.trim();
-  const language = document.getElementById("filmLanguage").value;
-  const url = document.getElementById("filmURL").value.trim();
-  const videoId = getVideoId(url);
-  const message = document.getElementById("message");
-  const button = document.getElementById("addButton");
-
-  if (!title || !videoId) {
-    message.textContent = "Saka sunan fim da ingantaccen YouTube link.";
-    return;
-  }
-
-  button.disabled = true;
-  message.textContent = "Ana adana fim...";
-
-  try {
-    await db.collection("films").add({
-      title,
-      language,
-      videoId,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-    document.getElementById("filmTitle").value = "";
-    document.getElementById("filmURL").value = "";
-    message.textContent = "An adana fim cikin nasara!";
-  } catch(error) {
-    message.textContent = "An samu matsala: " + error.message;
-  }
-
-  button.disabled = false;
+async function addFilm(){
+const title=document.getElementById("filmTitle").value.trim();
+const language=document.getElementById("filmLanguage").value;
+const url=document.getElementById("filmURL").value.trim();
+const videoId=getVideoId(url);
+const message=document.getElementById("message");
+if(!title||!videoId){
+message.textContent="Saka sunan fim da ingantaccen YouTube link.";
+return;
+}
+try{
+await db.collection("films").add({
+title,language,videoId,createdAt:firebase.firestore.FieldValue.serverTimestamp()
+});
+message.textContent="An ƙara fim cikin nasara!";
+document.getElementById("filmTitle").value="";
+document.getElementById("filmURL").value="";
+}catch(e){
+message.textContent="An samu matsala: "+e.message;
+}
 }
 
-db.collection("films").orderBy("createdAt", "desc")
-.onSnapshot(snapshot => {
-  const container = document.getElementById("films");
-  container.innerHTML = "";
-
-  if (snapshot.empty) {
-    container.textContent = "Babu fim tukuna.";
-    return;
-  }
-
-  snapshot.forEach(doc => {
-    const film = doc.data();
-    const card = document.createElement("div");
-    card.className = "film";
-
-    const heading = document.createElement("h3");
-    heading.textContent = film.title;
-
-    const language = document.createElement("small");
-    language.textContent = "Harshe: " + film.language;
-
-    const player = document.createElement("iframe");
-    player.src = "https://www.youtube.com/embed/" +
-      encodeURIComponent(film.videoId);
-    player.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-    player.allowFullscreen = true;
-    player.title = film.title;
-
-    card.append(heading, language, player);
-    container.appendChild(card);
-  });
-}, error => {
-  document.getElementById("films").textContent =
-    "Ba a iya ɗauko fina-finai ba: " + error.message;
+db.collection("films").orderBy("createdAt","desc").onSnapshot(snapshot=>{
+const container=document.getElementById("films");
+container.innerHTML="";
+snapshot.forEach(doc=>{
+const film=doc.data();
+const card=document.createElement("div");
+card.className="film";
+const heading=document.createElement("h3");
+heading.textContent=film.title;
+const language=document.createElement("small");
+language.textContent="Harshe: "+film.language;
+const player=document.createElement("iframe");
+player.src="https://www.youtube.com/embed/"+encodeURIComponent(film.videoId);
+player.title=film.title;
+player.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+player.allowFullscreen=true;
+card.append(heading,language,player);
+container.appendChild(card);
+});
+if(snapshot.empty) container.textContent="Babu fim tukuna.";
+},error=>{
+document.getElementById("films").textContent="An samu matsala wajen ɗauko fina-finai.";
 });
 </script>
 </body>
