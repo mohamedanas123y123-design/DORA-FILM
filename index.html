@@ -7,19 +7,21 @@
 <title>DORA FILM</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#090910;color:white;font-family:Arial,sans-serif}
-header{background:#e50914;text-align:center;padding:25px}
-header h1{font-size:34px;margin:0}
-header p{margin:8px 0 0}
-nav{text-align:center;padding:18px}
-select,input{padding:13px;border-radius:8px;border:none;margin:6px}
+body{margin:0;background:#090910;color:white;font-family:Arial}
+header{background:#e50914;padding:22px;text-align:center}
+header h1{font-size:32px;margin:0}
+nav{text-align:center;padding:15px}
+select,input{padding:12px;border-radius:8px;border:0;margin:5px}
 input{width:90%;max-width:450px}
-h2{color:#ff3030;padding:12px}
+h2{padding:12px;color:#ff3030}
 .movies{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:12px}
 .movie{background:#20202b;border-radius:12px;overflow:hidden;text-align:center;padding-bottom:15px}
-.poster{height:135px;background:linear-gradient(140deg,#e50914,#32104c);display:flex;align-items:center;justify-content:center;font-size:55px}
-button{background:#e50914;color:white;padding:11px 20px;border:0;border-radius:7px}
-footer{text-align:center;padding:25px;color:#aaa}
+.poster{height:120px;background:linear-gradient(135deg,#e50914,#32104c);display:flex;align-items:center;justify-content:center;font-size:48px}
+button{background:#e50914;color:white;border:0;padding:10px 16px;border-radius:7px}
+#player{display:none;padding:12px}
+video{width:100%;border-radius:10px;background:black}
+iframe{width:100%;height:230px;border:0;border-radius:10px}
+footer{text-align:center;padding:20px;color:#aaa}
 </style>
 </head>
 <body>
@@ -39,62 +41,49 @@ footer{text-align:center;padding:25px;color:#aaa}
 <input id="search" placeholder="Nemi fim..." oninput="searchMovies()">
 </nav>
 
-<h2 id="heading">Fina-finanmu</h2>
+<h2 id="heading">Fina-finai</h2>
 
-<div class="movies">
+<div class="movies" id="movies">
 
 <div class="movie">
 <div class="poster">🎥</div>
-<h3>Fina-finan Hausa</h3>
-<p>Hausa Movies</p>
-<button onclick="alert('Za a saka fina-finan Hausa nan ba da jimawa ba')">Kalli fim</button>
+<h3>Hausa Movies</h3>
+<p>Hausa</p>
+<button onclick="playMovie('ha')">Kalli fim ▶</button>
 </div>
 
 <div class="movie">
 <div class="poster">🎞️</div>
 <h3>English Movies</h3>
-<p>English Films</p>
-<button onclick="alert('English movies coming soon')">Watch</button>
+<p>English</p>
+<button onclick="playMovie('en')">Watch ▶</button>
 </div>
 
 <div class="movie">
 <div class="poster">🍿</div>
 <h3>Films Français</h3>
-<p>French Movies</p>
-<button onclick="alert('Films français bientôt disponibles')">Regarder</button>
+<p>French</p>
+<button onclick="playMovie('fr')">Regarder ▶</button>
 </div>
 
-<div class="movie">
-<div class="poster">⭐</div>
-<h3>DORA FILM</h3>
-<p>Entertainment</p>
-<button onclick="alert('Welcome to DORA FILM')">Open</button>
 </div>
 
+<div id="player">
+<h2 id="playing">Kallon fim</h2>
+<div id="videoArea"></div>
+<button onclick="closePlayer()">Rufe fim ✖</button>
 </div>
 
 <footer>
 <p>© 2026 DORA FILM</p>
-<p>Hausa | English | Français</p>
+<p>Hausa | English | French</p>
 </footer>
 
 <script>
 const words={
-ha:{
-welcome:"Barka da zuwa DORA FILM",
-heading:"Fina-finanmu",
-search:"Nemi fim..."
-},
-en:{
-welcome:"Welcome to DORA FILM",
-heading:"Our Movies",
-search:"Search movies..."
-},
-fr:{
-welcome:"Bienvenue sur DORA FILM",
-heading:"Nos Films",
-search:"Rechercher un film..."
-}
+ha:{welcome:"Barka da zuwa DORA FILM",heading:"Fina-finai",search:"Nemi fim...",playing:"Kallon fim"},
+en:{welcome:"Welcome to DORA FILM",heading:"Movies",search:"Search movies...",playing:"Now playing"},
+fr:{welcome:"Bienvenue sur DORA FILM",heading:"Films",search:"Rechercher un film...",playing:"Lecture du film"}
 };
 
 function changeLanguage(){
@@ -102,6 +91,7 @@ let lang=document.getElementById("language").value;
 document.getElementById("welcome").textContent=words[lang].welcome;
 document.getElementById("heading").textContent=words[lang].heading;
 document.getElementById("search").placeholder=words[lang].search;
+document.getElementById("playing").textContent=words[lang].playing;
 }
 
 function searchMovies(){
@@ -109,6 +99,45 @@ let value=document.getElementById("search").value.toLowerCase();
 document.querySelectorAll(".movie").forEach(movie=>{
 movie.style.display=movie.textContent.toLowerCase().includes(value)?"block":"none";
 });
+}
+
+function playMovie(lang){
+let title={
+ha:"Hausa Movies",
+en:"English Movies",
+fr:"Films Français"
+};
+document.getElementById("player").style.display="block";
+document.getElementById("playing").textContent=title[lang];
+document.getElementById("videoArea").innerHTML=
+'<p>Ka saka link din bidiyon da aka ba da izinin amfani da shi:</p>'+
+'<input id="videoLink" placeholder="Saka video link a nan">'+
+'<button onclick="loadVideo()">Play ▶</button>'+
+'<div id="screen"></div>';
+document.getElementById("player").scrollIntoView();
+}
+
+function loadVideo(){
+let url=document.getElementById("videoLink").value.trim();
+let screen=document.getElementById("screen");
+if(!url){alert("Saka link na fim");return;}
+
+if(url.includes("youtube.com/watch?v=")){
+let id=url.split("v=")[1].split("&")[0];
+screen.innerHTML='<iframe src="https://www.youtube.com/embed/'+id+'" allowfullscreen></iframe>';
+}else if(url.includes("youtu.be/")){
+let id=url.split("youtu.be/")[1].split("?")[0];
+screen.innerHTML='<iframe src="https://www.youtube.com/embed/'+id+'" allowfullscreen></iframe>';
+}else if(/\.(mp4|webm|ogg)(\?.*)?$/i.test(url)){
+screen.innerHTML='<video controls playsinline><source src="'+url+'" type="video/mp4"></video>';
+}else{
+alert("Wannan link ba a gane shi ba. Yi amfani da YouTube link ko MP4 link.");
+}
+}
+
+function closePlayer(){
+document.getElementById("player").style.display="none";
+document.getElementById("videoArea").innerHTML="";
 }
 </script>
 
