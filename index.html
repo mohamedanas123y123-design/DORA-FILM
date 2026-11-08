@@ -66,6 +66,52 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+async function addFilm() {
+  const title = document.getElementById("filmTitle").value.trim();
+  const language = document.getElementById("filmLanguage").value;
+  const url = document.getElementById("filmURL").value.trim();
+  const message = document.getElementById("message");
+  const button = document.getElementById("addButton");
+
+  let videoId = "";
+
+  try {
+    const u = new URL(url);
+    if (u.hostname.includes("youtu.be")) {
+      videoId = u.pathname.substring(1);
+    } else {
+      videoId = u.searchParams.get("v") || "";
+      if (!videoId && (u.pathname.includes("/embed/") || u.pathname.includes("/shorts/"))) {
+        videoId = u.pathname.split("/")[2];
+      }
+    }
+  } catch(e) {}
+
+  if (!title || !videoId) {
+    message.textContent = "Saka sunan fim da ingantaccen YouTube link.";
+    return;
+  }
+
+  button.disabled = true;
+  message.textContent = "Ana adana fim...";
+
+  try {
+    await db.collection("films").add({
+      title: title,
+      language: language,
+      videoId: videoId,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    message.textContent = "An adana fim cikin nasara!";
+    document.getElementById("filmTitle").value = "";
+    document.getElementById("filmURL").value = "";
+  } catch(error) {
+    message.textContent = "Kuskure: " + error.message;
+  }
+
+  button.disabled = false;
+}
+
 
 function getVideoId(url) {
   try {
