@@ -1,158 +1,23 @@
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
 
-<!DOCTYPE html>
-<html lang="ha">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DORA FILM PRO</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;background:#090910;color:white;font-family:Arial}
-header{background:#e50914;text-align:center;padding:22px}
-header h1{margin:0;font-size:32px}
-nav{text-align:center;padding:15px}
-input,select{padding:13px;border:0;border-radius:8px;margin:6px;width:90%;max-width:450px}
-button{background:#e50914;color:white;border:0;padding:12px 18px;border-radius:8px;margin:5px}
-h2{color:#ff3030;padding:12px}
-.player{padding:12px}
-iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:12px;background:black}
-.movies{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:12px}
-.movie{background:#242432;border-radius:10px;padding:12px;text-align:center}
-.poster{font-size:40px;background:#39152b;padding:20px}
-footer{text-align:center;padding:25px;color:#aaa}
-</style>
-</head>
-<body>
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyCzh8VXNw5t-h_lpUPhFOkeNueGr17MFn4",
+    authDomain: "dora-film.firebaseapp.com",
+    projectId: "dora-film",
+    storageBucket: "dora-film.firebasestorage.app",
+    messagingSenderId: "626028311638",
+    appId: "1:626028311638:web:61d177e15648d0983437f7",
+    measurementId: "G-Z0P12F7JRY"
+  };
 
-<header>
-<h1>🎬 DORA FILM</h1>
-<p>Hausa | English | Français</p>
-</header>
-
-<nav>
-<select id="language" onchange="changeLanguage()">
-<option value="ha">Hausa</option>
-<option value="en">English</option>
-<option value="fr">Français</option>
-</select>
-<br>
-<input id="search" placeholder="Nemi fim..." oninput="searchMovies()">
-</nav>
-
-<h2 id="heading">Fina-finai</h2>
-
-<div class="player">
-<h3 id="nowPlaying">Mai kunna fim 🎬</h3>
-<iframe id="youtubePlayer"
-src=""
-allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-allowfullscreen>
-</iframe>
-<p id="message">Zaɓi fim domin kallonsa.</p>
-</div>
-
-<div class="movies" id="movies"></div>
-
-<h2>➕ Ƙara sabon fim</h2>
-<div class="player">
-<input id="filmName" placeholder="Sunan fim">
-<select id="filmLanguage">
-<option value="Hausa">Hausa</option>
-<option value="English">English</option>
-<option value="French">French</option>
-</select>
-<input id="filmLink" placeholder="Manna YouTube link a nan">
-<button onclick="addFilm()">Ƙara fim</button>
-<p id="status"></p>
-</div>
-
-<footer>© 2026 DORA FILM PRO</footer>
-
-<script>
-let films=[];
-
-function getVideoID(link){
-try{
-let url=new URL(link);
-if(url.hostname==="youtu.be"){
-return url.pathname.split("/")[1];
-}
-if(url.hostname.includes("youtube.com")){
-if(url.pathname==="/watch") return url.searchParams.get("v");
-if(url.pathname.startsWith("/embed/"))
-return url.pathname.split("/")[2];
-if(url.pathname.startsWith("/shorts/"))
-return url.pathname.split("/")[2];
-}
-}catch(e){}
-return null;
-}
-
-function playFilm(id,name){
-document.getElementById("youtubePlayer").src=
-"https://www.youtube-nocookie.com/embed/"+encodeURIComponent(id);
-document.getElementById("nowPlaying").textContent="🎬 "+name;
-document.getElementById("message").textContent="Ana kunna fim.";
-window.scrollTo({top:0,behavior:"smooth"});
-}
-
-function addFilm(){
-let name=document.getElementById("filmName").value.trim();
-let link=document.getElementById("filmLink").value.trim();
-let language=document.getElementById("filmLanguage").value;
-let id=getVideoID(link);
-
-if(!name||!id){
-document.getElementById("status").textContent=
-"Ka saka sunan fim da ingantaccen YouTube link.";
-return;
-}
-
-films.push({name,id,language});
-showFilms();
-document.getElementById("filmName").value="";
-document.getElementById("filmLink").value="";
-document.getElementById("status").textContent="An ƙara fim!";
-}
-
-function showFilms(){
-let area=document.getElementById("movies");
-area.innerHTML="";
-films.forEach(f=>{
-let card=document.createElement("div");
-card.className="movie";
-let poster=document.createElement("div");
-poster.className="poster";
-poster.textContent="🎥";
-let title=document.createElement("h3");
-title.textContent=f.name;
-let language=document.createElement("p");
-language.textContent=f.language;
-let btn=document.createElement("button");
-btn.textContent="Play ▶";
-btn.onclick=()=>playFilm(f.id,f.name);
-card.append(poster,title,language,btn);
-area.appendChild(card);
-});
-}
-
-function searchMovies(){
-let q=document.getElementById("search").value.toLowerCase();
-document.querySelectorAll(".movie").forEach(card=>{
-card.style.display=card.textContent.toLowerCase().includes(q)?"block":"none";
-});
-}
-
-function changeLanguage(){
-let lang=document.getElementById("language").value;
-let words={
-ha:"Fina-finai",
-en:"Movies",
-fr:"Films"
-};
-document.getElementById("heading").textContent=words[lang];
-}
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
 </script>
-
-</body>
-</html>
